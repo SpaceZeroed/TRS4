@@ -22,7 +22,7 @@ namespace var9
     }
     double phi(double x)
     {
-        return true_u(0, x);
+        return true_u(x, 0);
     }
     double ksi0(double t)
     {
@@ -37,7 +37,7 @@ vector<double> Make_F(int n , int m , vector<double> X, vector<double> Time)
     {
         for (int j = 0; j < n - 1; j++)
         {
-            F[i * (n - 1) + j] = f(X[j], Time[i]);
+            F[i * (n - 1) + j] = f(X[j + 1], Time[i + 1]);
         }
     }
     return F;
@@ -82,11 +82,11 @@ vector<double> Ex1(int n, int m) // сколько всего точек
     double dx = (b - a) / (n - 1);
     double tau = T / (m - 1);
     vector<double> X(n, 0), Time(m, 0), otv((n - 1) * (m - 1), 0);
-    vector<double> F = Make_F(n, m, X, Time);
     for (int i = 0; i < n; i++)
         X[i] = a + i * dx;
     for (int i = 0; i < m; i++)
         Time[i] = i * tau;
+    vector<double> F = Make_F(n, m, X, Time);
     double alpha = 1. - c * tau / dx , betta = c * tau / dx;
     // первая строчка значений 
     otv[0] = alpha * phi(X[1]) + betta * ksi0(X[0]) + tau * F[0];
@@ -115,6 +115,8 @@ vector<double> vector_true_U(int n, int m)
         X[i] = a + i * dx;
     for (int i = 0; i < m; i++)
         Time[i] = i * tau;
+    //PrintVector(X);
+    //PrintVector(Time);
 
     for (int i = 0; i < m - 1; i++)
     {
@@ -128,9 +130,10 @@ vector<double> vector_true_U(int n, int m)
 
 int main()
 {
-    PrintVector(Ex1(5, 5));
-    PrintVector(vector_true_U(5, 5));
-    //cout << "ex1 max razn = " << MaxRazn(Ex1(1000, 1000), vector_true_U(1000, 1000));
+    //PrintVector(Ex1(5, 10));
+    //PrintVector(vector_true_U(5, 10));
+    // не забывать про условие устойчивости для явной схемы tau < dx
+    cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000));
     return 0;
 }
 
