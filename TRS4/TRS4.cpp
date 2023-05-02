@@ -106,6 +106,33 @@ vector<double> Ex1(int n, int m) // сколько всего точек
     }
     return otv;
 }
+vector<double> Ex2(int n, int m) // сколько всего точек 
+{
+    double dx = (b - a) / (n - 1);
+    double tau = T / (m - 1);
+    vector<double> X(n, 0), Time(m, 0), otv((n - 1) * (m - 1), 0);
+    for (int i = 0; i < n; i++)
+        X[i] = a + i * dx;
+    for (int i = 0; i < m; i++)
+        Time[i] = i * tau;
+    vector<double> F = Make_F(n, m, X, Time);
+    double alpha = 1. + c * tau / dx, betta = c * tau / dx;
+    // первая строчка значений 
+    otv[0] = ( betta * ksi0(Time[1]) + phi(X[1]) + tau * F[0] ) / alpha;
+    for (int i = 1; i < n - 1; i++)
+    {
+        otv[i] = (betta * otv[i - 1] + phi(X[i + 1]) + tau * F[i] ) / alpha;
+    }
+    for (int i = 1; i < m - 1; i++)
+    {
+        otv[i * (n - 1)] = (  betta * ksi0(Time[i + 1]) + otv[(i - 1) * (n - 1)] + tau * F[i * ( n - 1)]  ) / alpha;
+        for (int j = 1; j < n - 1; j++)
+        {
+            otv[i * (n - 1) + j] = ( betta * otv[i * (n - 1) + j - 1] + otv[i * (n - 1) + j - (n - 1)] + tau * F[i * (n - 1) + j]  ) / alpha;
+        }
+    }
+    return otv;
+}
 vector<double> vector_true_U(int n, int m)
 {
     double dx = (b - a) / (n - 1);
@@ -131,9 +158,11 @@ vector<double> vector_true_U(int n, int m)
 int main()
 {
     //PrintVector(Ex1(5, 10));
+    //PrintVector(Ex2(5, 5));
     //PrintVector(vector_true_U(5, 10));
     // не забывать про условие устойчивости для явной схемы tau < dx
-    cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000));
+    //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000));
+    cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000));
     return 0;
 }
 
