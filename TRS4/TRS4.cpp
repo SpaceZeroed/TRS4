@@ -2,10 +2,136 @@
 //
 
 #include <iostream>
+#include <math.h>
+#include <vector>
+#include <iomanip>
+using namespace std;
+namespace var9
+{
+    double a = 0;
+    double b = 2;
+    double T = 3;
+    double c = 1;
+    double true_u(double x, double t)
+    {
+        return 1 + t * x - exp(x - t - 1);
+    }
+    double f(double x, double t)
+    {
+        return x + t;
+    }
+    double phi(double x)
+    {
+        return true_u(0, x);
+    }
+    double ksi0(double t)
+    {
+        return true_u(a, t);
+    }
+}
+using namespace var9;
+vector<double> Make_F(int n , int m , vector<double> X, vector<double> Time)
+{
+    vector<double> F((n - 1) * (m - 1), 0);
+    for (int i = 0; i < m - 1; i++)
+    {
+        for (int j = 0; j < n - 1; j++)
+        {
+            F[i * (n - 1) + j] = f(X[j], Time[i]);
+        }
+    }
+    return F;
+}
+void PrintMatrix(vector<vector<double>> Matrix)
+{
+    cout << fixed << std::setprecision(5);
+    cout << "-------------------------------------------------------------" << endl;
+    for (int i = 0; i < Matrix.size(); i++)
+    {
+        for (int j = 0; j < Matrix[i].size(); j++)
+        {
+            cout << setw(7) << Matrix[i][j] << "  ";
+        }
+        cout << endl;
+    }
+    cout << "-------------------------------------------------------------" << endl;
+}
+void PrintVector(vector<double> V)
+{
+    cout << fixed << std::setprecision(5);
+    cout << "-------------------------------------------------------------" << endl;
+    for (int i = 0; i < V.size(); i++)
+    {
+        cout << setw(7) << V[i] << "  " << endl;
+    }
+    cout << "-------------------------------------------------------------" << endl;
+}
+double MaxRazn(vector<double> a1, vector<double> a2)
+{
+    double raz = 0;
+    for (int i = 0; i < a1.size(); i++)
+    {
+        if (abs(a1[i] - a2[i]) > raz)
+            raz = abs(a1[i] - a2[i]);
+    }
+    return raz;
+}
+
+vector<double> Ex1(int n, int m) // сколько всего точек 
+{
+    double dx = (b - a) / (n - 1);
+    double tau = T / (m - 1);
+    vector<double> X(n, 0), Time(m, 0), otv((n - 1) * (m - 1), 0);
+    vector<double> F = Make_F(n, m, X, Time);
+    for (int i = 0; i < n; i++)
+        X[i] = a + i * dx;
+    for (int i = 0; i < m; i++)
+        Time[i] = i * tau;
+    double alpha = 1. - c * tau / dx , betta = c * tau / dx;
+    // первая строчка значений 
+    otv[0] = alpha * phi(X[1]) + betta * ksi0(X[0]) + tau * F[0];
+    for (int i = 1; i <= n - 2; i++)
+    {
+        otv[i] = alpha * phi(X[i]) + betta * phi(X[i - 1]) + tau * F[i];
+    }
+    for (int i = 1; i < m - 1; i++)
+    {
+        otv[i * (n - 1)] = alpha * otv[(i - 1) * (n - 1)] + betta * ksi0(Time[i + 1]) 
+            + tau * F[i * (n - 1)];
+        for (int j = 1; j < n - 1; j++)
+        {
+            otv[i * (n - 1) + j] = alpha * otv[(i - 1) * (n - 1) + j ] + betta * otv[(i - 1) * (n - 1)  + j - 1]
+                + tau * F[i * (n - 1) + j ];
+        }
+    }
+    return otv;
+}
+vector<double> vector_true_U(int n, int m)
+{
+    double dx = (b - a) / (n - 1);
+    double tau = T / (m - 1);
+    vector<double> X(n, 0), Time(m, 0), temp((n - 1) * (m - 1), 0);
+    for (int i = 0; i < n; i++)
+        X[i] = a + i * dx;
+    for (int i = 0; i < m; i++)
+        Time[i] = i * tau;
+
+    for (int i = 0; i < m - 1; i++)
+    {
+        for (int j = 0; j < n - 1; j++)
+        {
+            temp[i * (n - 1) + j] = true_u(X[j + 1], Time[i + 1]);
+        }
+    }
+    return temp;
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    PrintVector(Ex1(5, 5));
+    PrintVector(vector_true_U(5, 5));
+    //cout << "ex1 max razn = " << MaxRazn(Ex1(1000, 1000), vector_true_U(1000, 1000));
+    return 0;
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
