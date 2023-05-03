@@ -161,8 +161,8 @@ int main()
     //PrintVector(Ex2(5, 5));
     //PrintVector(vector_true_U(5, 10));
     // не забывать про условие устойчивости для явной схемы tau < dx
-    //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000));
-    cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000));
+    cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
+    cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
     return 0;
 }
 
