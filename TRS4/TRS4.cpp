@@ -8,6 +8,7 @@
 using namespace std;
 namespace var9
 {
+    // info for first task
     double a = 0;
     double b = 2;
     double T = 3;
@@ -27,6 +28,20 @@ namespace var9
     double ksi0(double t)
     {
         return true_u(a, t);
+    }
+    // info for second task
+    double sa = 4; // square a
+    double g(double x, double t) // it is f but renamed to g
+    {
+        return x * t;
+    }
+    double phi0(double x)
+    {
+        return x * x;
+    }
+    double phi1(double x)
+    {
+        return x;
     }
 }
 using namespace var9;
