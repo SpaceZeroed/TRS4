@@ -43,6 +43,11 @@ namespace var9
     {
         return x;
     }
+    double nb = 1; // b for task 2
+    double DalamberU(double x, double t)
+    {
+        return x*x+16*t*t+x*t+x*pow(t,3)/6;
+    }
 }
 using namespace var9;
 vector<double> Make_F(int n , int m , vector<double> X, vector<double> Time)
@@ -56,6 +61,18 @@ vector<double> Make_F(int n , int m , vector<double> X, vector<double> Time)
         }
     }
     return F;
+}
+vector<double> Make_G(int n, int m, vector<double> X, vector<double> Time)
+{
+    vector<double> G((n - 1) * (m - 1), 0);
+    for (int i = 0; i < m - 1; i++)
+    {
+        for (int j = 0; j < n - 1; j++)
+        {
+            G[i * (n - 1) + j] = g(X[j + 1], Time[i + 1]);
+        }
+    }
+    return G;
 }
 void PrintMatrix(vector<vector<double>> Matrix)
 {
@@ -78,6 +95,20 @@ void PrintVector(vector<double> V)
     for (int i = 0; i < V.size(); i++)
     {
         cout << setw(7) << V[i] << "  " << endl;
+    }
+    cout << "-------------------------------------------------------------" << endl;
+}
+void PrintAllVectors(vector<vector<double>> V)
+{
+    cout << fixed << std::setprecision(5);
+    cout << "-------------------------------------------------------------" << endl;
+    for (int i = 0; i < V[0].size(); i++)
+    {
+        for (int n = 0; n < V.size(); n++)
+        {
+        cout << setw(7) << V[n][i] << "  ";
+        }
+        cout << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
 }
@@ -148,6 +179,35 @@ vector<double> Ex2(int n, int m) // сколько всего точек
     }
     return otv;
 }
+//vector<double> Ex3(int n, int m) // сколько всего точек 
+//{
+//    double h = (b - a) / (n - 1);
+//    double tau = T / (m - 1);
+//    vector<double> X(n, 0), Time(m, 0), ans((n - 1) * (m - 1), 0);
+//    for (int i = 0; i < n; i++)
+//        X[i] = a + i * h;
+//    for (int i = 0; i < m; i++)
+//        Time[i] = i * tau;
+//    vector<double> G = Make_G(n, m, X, Time);
+//    double p = sa * tau * tau / (h * h); // 
+//    // первая строчка значений 
+//    ans[0] = alpha * phi0(X[1]) + betta * phi1(X[0]) + tau * G[0];
+//    for (int i = 1; i <= n - 2; i++)
+//    {
+//        ans[i] = alpha * phi0(X[i]) + betta * phi0(X[i - 1]) + tau * G[i];
+//    }
+//    for (int i = 1; i < m - 1; i++)
+//    {
+//        ans[i * (n - 1)] = alpha * ans[(i - 1) * (n - 1)] + betta * phi1(Time[i + 1])
+//            + tau * G[i * (n - 1)];
+//        for (int j = 1; j < n - 1; j++)
+//        {
+//            ans[i * (n - 1) + j] = alpha * ans[(i - 1) * (n - 1) + j] + betta * ans[(i - 1) * (n - 1) + j - 1]
+//                + tau * G[i * (n - 1) + j];
+//        }
+//    }
+//    return ans;
+//}
 vector<double> vector_true_U(int n, int m)
 {
     double dx = (b - a) / (n - 1);
@@ -169,12 +229,38 @@ vector<double> vector_true_U(int n, int m)
     }
     return temp;
 }
+vector<double> vector_Dalamber_U(int n, int m)
+{
+    double dx = (b - a) / (n - 1);
+    double tau = T / (m - 1);
+    vector<double> X(n, 0), Time(m, 0), temp((n - 1) * (m - 1), 0);
+    for (int i = 0; i < n; i++)
+        X[i] = a + i * dx;
+    for (int i = 0; i < m; i++)
+        Time[i] = i * tau;
+    //PrintVector(X);
+    //PrintVector(Time);
+
+    for (int i = 0; i < m - 1; i++)
+    {
+        for (int j = 0; j < n - 1; j++)
+        {
+            temp[i * (n - 1) + j] = DalamberU(X[j + 1], Time[i + 1]);
+        }
+    }
+    return temp;
+}
 
 int main()
 {
     //PrintVector(Ex1(5, 10));
     //PrintVector(Ex2(5, 5));
     //PrintVector(vector_true_U(5, 10));
+    vector<vector<double>> Temp;
+    Temp.push_back(Ex1(10, 100));
+    Temp.push_back(Ex2(10, 100));
+    Temp.push_back(vector_true_U(10, 100));
+    PrintAllVectors(Temp);
     // не забывать про условие устойчивости для явной схемы tau < dx
     cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
     cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
