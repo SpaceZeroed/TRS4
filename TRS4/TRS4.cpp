@@ -213,10 +213,10 @@ vector<double> Ex3(int n, int m) // сколько всего точек
     // остальные
     for (int i = 2; i < m - 1; i++)
     {
-        ans[i*(n - 1)] = p * (ans[(i-1)*(n-1)+2] - 2 * ans[(i - 1) * (n - 1)+1] +
+        /*ans[i*(n - 1)] = p * (ans[(i-1)*(n-1)+2] - 2 * ans[(i - 1) * (n - 1)+1] +
             phi0(X[i])) + tau * tau * G[i*(n - 1)] + 2 * ans[(i - 1) * (n - 1)+1] +
-            ans[(i - 2) * (n - 1)];
-        for (int j = 1; j < n - 1; j++)// цикл на последней итерации считает по краевому усл
+            ans[(i - 2) * (n - 1)];*/
+        for (int j = 0; j < n - 1; j++)// цикл на последней итерации считает по краевому усл
         {
             if (j != n - 2)
             {
@@ -228,7 +228,7 @@ vector<double> Ex3(int n, int m) // сколько всего точек
             }
             else
             {
-            ans[i * (n - 1) + j] = p * (phi1(X[j+1]) -
+            ans[i * (n - 1) + j] = p * (phi1(X[j]) -
                 2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 1) * (n - 1) + j]) +
                 tau * tau * G[i * (n - 1)] +
                 2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 2) * (n - 1) + j];
@@ -237,6 +237,48 @@ vector<double> Ex3(int n, int m) // сколько всего точек
     }
     return ans;
 }
+//vector<double> Ex4(int n, int m)
+//{
+//    int n_big = int(l / h) + 1;
+//    vector <double> X(n_big);
+//    vector <double> T(n_big);
+//    vector <vector<double>> U; // for U t is the first arg, x is second
+//    for (int i = 0; i < n_big; i++)
+//    {
+//        X[i] = i * h;
+//        T[i] = i * tau;
+//    }
+//    for (int m = 0; m < n_big; m++)
+//    {
+//        vector<double> temp(n_big, 0.);
+//        U.push_back(temp);
+//    }
+//    for (int i = 0; i < n_big; i++)
+//    {
+//        U[0][i] = phi(X[i]);
+//    }
+//    for (int n = 1; n < n_big; n++)
+//    {
+//        vector <double> altha(n_big, 0), betta(n_big, 0);
+//        altha[0] = 1; betta[0] = -h * psi0(T[n]);
+//        for (int i = 1; i <= n_big - 2; i++)
+//        {
+//            double a = -tau / (h * h);
+//            double b = 1 + 2 * tau / (h * h);
+//            double c = -tau / (h * h);
+//            double z = U[n - 1][i] + tau * f(T[n], X[i]);
+//            altha[i] = -a / (b + c * altha[i - 1]);
+//            betta[i] = (z - c * betta[i - 1]) / (b + c * altha[i - 1]);
+//        }
+//        U[n][n_big - 1] = ((3 * T[n] * T[n] / 2 + 2) * h + betta[n_big - 2]) / (1 + h - altha[n_big - 2]);
+//        for (int i = n_big - 2; i >= 0; i--)
+//        {
+//            U[n][i] = altha[i] * U[n][i + 1] + betta[i];
+//        }
+//    }
+//    PrintMatrix(U);
+//    return U;
+//}
 vector<double> vector_true_U(int n, int m)
 {
     double dx = (b - a) / (n - 1);
@@ -260,7 +302,7 @@ vector<double> vector_true_U(int n, int m)
 }
 vector<double> vector_Dalamber_U(int n, int m)
 {
-    double dx = (b - a) / (n - 1);
+    double dx = (nb - a) / (n - 1);
     double tau = T / (m - 1);
     vector<double> X(n, 0), Time(m, 0), temp((n - 1) * (m - 1), 0);
     for (int i = 0; i < n; i++)
@@ -290,13 +332,13 @@ int main()
     Temp.push_back(Ex2(10, 100));
     Temp.push_back(vector_true_U(10, 100));*/
     vector<vector<double>> Temp;
-    Temp.push_back(Ex3(5, 10));
-    Temp.push_back(vector_Dalamber_U(5, 10));
+    Temp.push_back(Ex3(10, 100));
+    Temp.push_back(vector_Dalamber_U(10, 100));
     PrintAllVectors(Temp);
     // не забывать про условие устойчивости для явной схемы tau < dx
     //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
     //cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
-    cout << "ex3 max razn = " << MaxRazn(Ex3(100, 1000), vector_Dalamber_U(100, 1000)) << endl;
+    cout << "ex3 max razn = " << MaxRazn(Ex3(10, 100), vector_Dalamber_U(10, 100)) << endl;
     return 0;
 }
 
