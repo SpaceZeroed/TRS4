@@ -49,7 +49,7 @@ namespace var9
     }
     double psi1(double t)
     {
-        return  (2+t + pow(t,3) / 6);
+        return  (1+t+ 16*t*t + pow(t,3) / 6);
     }
     double nb = 1; // b for task 2
     double DalamberU(double x, double t)
@@ -202,7 +202,7 @@ vector<double> Ex3(int n, int m) // сколько всего точек
     ans[0] = p * (psi0(Time[2]) - 2 * psi0(Time[1]) + psi0(Time[0])) + tau * tau * G[0] + 2 * psi0(Time[1]);
     for (int i = 1; i <= n - 2; i++)
     {
-       ans[i] = p*(psi0(Time[i+1])-2*psi0(Time[i])+psi0(Time[i-1]))+ tau*tau*G[i-1]+2*psi0(Time[i]);
+       ans[i] = p*(psi0(Time[i+2])-2*psi0(Time[i+1])+psi0(Time[i]))+ tau*tau*G[i]+2*psi0(Time[i+1]);
     }
     // вторая строчка
     ans[n-1] = p * (ans[2] - 2 * ans[1] + phi0(X[1])) + tau * tau * G[n - 1] + 2 * ans[1]+psi0(Time[1]);
@@ -332,8 +332,8 @@ int main()
     Temp.push_back(Ex2(10, 100));
     Temp.push_back(vector_true_U(10, 100));*/
     vector<vector<double>> Temp;
-    Temp.push_back(Ex3(10, 100));
-    Temp.push_back(vector_Dalamber_U(10, 100));
+    Temp.push_back(Ex3(5, 10));
+    Temp.push_back(vector_Dalamber_U(5, 10));
     PrintAllVectors(Temp);
     // не забывать про условие устойчивости для явной схемы tau < dx
     //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
