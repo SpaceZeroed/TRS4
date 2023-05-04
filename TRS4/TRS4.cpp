@@ -43,6 +43,14 @@ namespace var9
     {
         return x;
     }
+    double psi0(double t)
+    {
+        return 16 * t * t;
+    }
+    double psi1(double t)
+    {
+        return  (2+t + pow(t,3) / 6);
+    }
     double nb = 1; // b for task 2
     double DalamberU(double x, double t)
     {
@@ -179,35 +187,56 @@ vector<double> Ex2(int n, int m) // сколько всего точек
     }
     return otv;
 }
-//vector<double> Ex3(int n, int m) // сколько всего точек 
-//{
-//    double h = (b - a) / (n - 1);
-//    double tau = T / (m - 1);
-//    vector<double> X(n, 0), Time(m, 0), ans((n - 1) * (m - 1), 0);
-//    for (int i = 0; i < n; i++)
-//        X[i] = a + i * h;
-//    for (int i = 0; i < m; i++)
-//        Time[i] = i * tau;
-//    vector<double> G = Make_G(n, m, X, Time);
-//    double p = sa * tau * tau / (h * h); // 
-//    // первая строчка значений 
-//    ans[0] = alpha * phi0(X[1]) + betta * phi1(X[0]) + tau * G[0];
-//    for (int i = 1; i <= n - 2; i++)
-//    {
-//        ans[i] = alpha * phi0(X[i]) + betta * phi0(X[i - 1]) + tau * G[i];
-//    }
-//    for (int i = 1; i < m - 1; i++)
-//    {
-//        ans[i * (n - 1)] = alpha * ans[(i - 1) * (n - 1)] + betta * phi1(Time[i + 1])
-//            + tau * G[i * (n - 1)];
-//        for (int j = 1; j < n - 1; j++)
-//        {
-//            ans[i * (n - 1) + j] = alpha * ans[(i - 1) * (n - 1) + j] + betta * ans[(i - 1) * (n - 1) + j - 1]
-//                + tau * G[i * (n - 1) + j];
-//        }
-//    }
-//    return ans;
-//}
+vector<double> Ex3(int n, int m) // сколько всего точек 
+{
+    double h = (nb - a) / (n - 1);
+    double tau = T / (m - 1);
+    vector<double> X(n, 0), Time(m, 0), ans((n - 1) * (m - 1), 0); // мы не храним края и н у
+    for (int i = 0; i < n; i++)
+        X[i] = a + i * h;
+    for (int i = 0; i < m; i++)
+        Time[i] = i * tau;
+    vector<double> G = Make_G(n, m, X, Time);
+    double p = sa * tau * tau / (h * h); // 
+    // первая строчка значений 
+    ans[0] = p * (psi0(Time[2]) - 2 * psi0(Time[1]) + psi0(Time[0])) + tau * tau * G[0] + 2 * psi0(Time[1]);
+    for (int i = 1; i <= n - 2; i++)
+    {
+       ans[i] = p*(psi0(Time[i+1])-2*psi0(Time[i])+psi0(Time[i-1]))+ tau*tau*G[i-1]+2*psi0(Time[i]);
+    }
+    // вторая строчка
+    ans[n-1] = p * (ans[2] - 2 * ans[1] + phi0(X[1])) + tau * tau * G[n - 1] + 2 * ans[1]+psi0(Time[1]);
+    for (int i = 1; i <= n - 2; i++)
+    {
+        ans[n-1+i] = p * (ans[i + 1] - 2 * ans[i] + ans[i - 1]) + tau * tau * G[i - 1] + 2 * ans[i] + psi0(Time[i+1]);
+    }
+    // остальные
+    for (int i = 2; i < m - 1; i++)
+    {
+        ans[i*(n - 1)] = p * (ans[(i-1)*(n-1)+2] - 2 * ans[(i - 1) * (n - 1)+1] +
+            phi0(X[i])) + tau * tau * G[i*(n - 1)] + 2 * ans[(i - 1) * (n - 1)+1] +
+            ans[(i - 2) * (n - 1)];
+        for (int j = 1; j < n - 1; j++)// цикл на последней итерации считает по краевому усл
+        {
+            if (j != n - 2)
+            {
+            
+            ans[i * (n - 1) + j] = p * (ans[(i - 1) * (n - 1) + 2 + j] -
+                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 1) * (n - 1) + j]) +
+                tau * tau * G[i * (n - 1)] +
+                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 2) * (n - 1) + j];
+            }
+            else
+            {
+            ans[i * (n - 1) + j] = p * (phi1(X[j+1]) -
+                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 1) * (n - 1) + j]) +
+                tau * tau * G[i * (n - 1)] +
+                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 2) * (n - 1) + j];
+            }
+        }
+    }
+    return ans;
+}
 vector<double> vector_true_U(int n, int m)
 {
     double dx = (b - a) / (n - 1);
@@ -256,14 +285,18 @@ int main()
     //PrintVector(Ex1(5, 10));
     //PrintVector(Ex2(5, 5));
     //PrintVector(vector_true_U(5, 10));
-    vector<vector<double>> Temp;
+    /*vector<vector<double>> Temp;
     Temp.push_back(Ex1(10, 100));
     Temp.push_back(Ex2(10, 100));
-    Temp.push_back(vector_true_U(10, 100));
+    Temp.push_back(vector_true_U(10, 100));*/
+    vector<vector<double>> Temp;
+    Temp.push_back(Ex3(5, 10));
+    Temp.push_back(vector_Dalamber_U(5, 10));
     PrintAllVectors(Temp);
     // не забывать про условие устойчивости для явной схемы tau < dx
-    cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
-    cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
+    //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
+    //cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
+    cout << "ex3 max razn = " << MaxRazn(Ex3(100, 1000), vector_Dalamber_U(100, 1000)) << endl;
     return 0;
 }
 
