@@ -187,54 +187,59 @@ vector<double> Ex2(int n, int m) // сколько всего точек
     }
     return otv;
 }
-vector<double> Ex3(int n, int m) // сколько всего точек 
+vector<double> Ex3(int n, int m) // номер последней точки
 {
-    double h = (nb - a) / (n - 1);
-    double tau = T / (m - 1);
-    vector<double> X(n, 0), Time(m, 0), ans((n - 1) * (m - 1), 0); // мы не храним края и н у
-    for (int i = 0; i < n; i++)
+    double h = (nb - a) / (n);
+    double tau = T / (m);
+    vector<double> X(n+1, 0), Time(m+1, 0), ans((n - 1) * (m - 1), 0); // мы не храним края и н у
+    for (int i = 0; i <= n; i++)
         X[i] = a + i * h;
-    for (int i = 0; i < m; i++)
+    for (int i = 0; i <= m; i++)
         Time[i] = i * tau;
+    cout << "Tau is " << tau << "  " << "H is " << h << endl;
     vector<double> G = Make_G(n, m, X, Time);
     double p = sa * tau * tau / (h * h); // 
     // первая строчка значений 
-    ans[0] = p * (psi0(Time[2]) - 2 * psi0(Time[1]) + psi0(Time[0])) + tau * tau * G[0] + 2 * psi0(Time[1]);
-    for (int i = 1; i <= n - 2; i++)
+    //ans[0] = p * (psi0(Time[2]) - 2 * psi0(Time[1]) + psi0(Time[0])) + tau * tau * G[0]/2 + psi0(Time[1]);
+    for (int i = 0; i <= n - 2; i++)
     {
-       ans[i] = p*(psi0(Time[i+2])-2*psi0(Time[i+1])+psi0(Time[i]))+ tau*tau*G[i]+2*psi0(Time[i+1]);
+       ans[i] = p*(phi0(X[i+2])-2*phi0(X[i+1])+phi0(X[i]))+ tau*tau*G[i]+phi0(X[i+1]);
     }
     // вторая строчка
-    ans[n-1] = p * (ans[2] - 2 * ans[1] + phi0(X[1])) + tau * tau * G[n - 1] + 2 * ans[1]+psi0(Time[1]);
-    for (int i = 1; i <= n - 2; i++)
+    ans[n-1] = p * (ans[1] - 2 * ans[0] + psi0(Time[1]) )+ tau * tau * G[n - 1]
+        + 2 * ans[0] - phi0(X[1]);
+    for (int i = 1; i < n - 2; i++)
     {
-        ans[n-1+i] = p * (ans[i + 1] - 2 * ans[i] + ans[i - 1]) + tau * tau * G[i - 1] + 2 * ans[i] + psi0(Time[i+1]);
+        ans[i + n - 1] = p * (ans[i + 1] - 2 * ans[i] + ans[i - 1] ) + tau * tau * G[i + n - 1]
+            + 2 * ans[i] - phi0(X[i + 1]);
     }
+    ans[2 * n - 3] = p * (psi1(Time[1]) - 2 * ans[2 * n - 3] + ans[2 * n - 4]) + tau * tau * G[2 * n - 3]
+        + 2 * ans[2 * n - 3] - phi0(X[n - 2 + 1]);
     // остальные
-    for (int i = 2; i < m - 1; i++)
-    {
-        /*ans[i*(n - 1)] = p * (ans[(i-1)*(n-1)+2] - 2 * ans[(i - 1) * (n - 1)+1] +
-            phi0(X[i])) + tau * tau * G[i*(n - 1)] + 2 * ans[(i - 1) * (n - 1)+1] +
-            ans[(i - 2) * (n - 1)];*/
-        for (int j = 0; j < n - 1; j++)// цикл на последней итерации считает по краевому усл
-        {
-            if (j != n - 2)
-            {
-            
-            ans[i * (n - 1) + j] = p * (ans[(i - 1) * (n - 1) + 2 + j] -
-                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 1) * (n - 1) + j]) +
-                tau * tau * G[i * (n - 1)] +
-                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 2) * (n - 1) + j];
-            }
-            else
-            {
-            ans[i * (n - 1) + j] = p * (phi1(X[j]) -
-                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 1) * (n - 1) + j]) +
-                tau * tau * G[i * (n - 1)] +
-                2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 2) * (n - 1) + j];
-            }
-        }
-    }
+    //for (int i = 2; i < m - 1; i++)
+    //{
+    //    /*ans[i*(n - 1)] = p * (ans[(i-1)*(n-1)+2] - 2 * ans[(i - 1) * (n - 1)+1] +
+    //        phi0(X[i])) + tau * tau * G[i*(n - 1)] + 2 * ans[(i - 1) * (n - 1)+1] +
+    //        ans[(i - 2) * (n - 1)];*/
+    //    for (int j = 0; j < n - 1; j++)// цикл на последней итерации считает по краевому усл
+    //    {
+    //        if (j != n - 1)
+    //        {
+    //        
+    //        ans[i * (n - 1) + j] = p * (ans[(i - 1) * (n - 1) + 2 + j] -
+    //            2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 1) * (n - 1) + j]) +
+    //            tau * tau * G[i * (n - 1)] +
+    //            2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 2) * (n - 1) + j];
+    //        }
+    //        /*else
+    //        {
+    //        ans[i * (n - 1) + j] = p * (phi1(X[j]) -
+    //            2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 1) * (n - 1) + j]) +
+    //            tau * tau * G[i * (n - 1)] +
+    //            2 * ans[(i - 1) * (n - 1) + 1 + j] + ans[(i - 2) * (n - 1) + j];
+    //        }*/
+    //    }
+    //}
     return ans;
 }
 //vector<double> Ex4(int n, int m)
@@ -332,13 +337,13 @@ int main()
     Temp.push_back(Ex2(10, 100));
     Temp.push_back(vector_true_U(10, 100));*/
     vector<vector<double>> Temp;
-    Temp.push_back(Ex3(5, 10));
-    Temp.push_back(vector_Dalamber_U(5, 10));
+    Temp.push_back(Ex3(15, 100));
+    Temp.push_back(vector_Dalamber_U(15, 100));
     PrintAllVectors(Temp);
     // не забывать про условие устойчивости для явной схемы tau < dx
     //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
     //cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
-    cout << "ex3 max razn = " << MaxRazn(Ex3(10, 100), vector_Dalamber_U(10, 100)) << endl;
+    cout << "ex3 max razn = " << MaxRazn(Ex3(15, 100), vector_Dalamber_U(15, 100)) << endl;
     return 0;
 }
 
