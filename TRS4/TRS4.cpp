@@ -30,7 +30,7 @@ namespace var9
         return true_u(a, t);
     }
     // info for second task
-    double sa = 4; // square a
+    double sa = 1; // square a
     double g(double x, double t) // it is f but renamed to g
     {
         return x * t;
@@ -49,7 +49,7 @@ namespace var9
     }
     double psi0(double t)
     {
-        return 16 * t * t;
+        return  t * t;
     }
     double psi1(double t)
     {
@@ -58,7 +58,7 @@ namespace var9
     double nb = 1; // b for task 2
     double DalamberU(double x, double t)
     {
-        return x*x+16*t*t+x*t+x*pow(t,3)/6;
+        return x*x+t*t+x*t+x*pow(t,3)/6;
     }
 }
 using namespace var9;
