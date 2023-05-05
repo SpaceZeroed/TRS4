@@ -197,10 +197,10 @@ vector<double> Ex2(int n, int m) // сколько всего точек
 }
 vector<double> Ex3(int n, int m) // номер последней точки матрицы, но у вектора минус 1
 {
-    double h = (nb - a) / (n+1);
+    double h = (nb - a) / (n + 1);
     double tau = T / (m);
-    vector<double> X(n+2, 0), Time(m+1, 0), ans(n*m, 0); // мы не храним края и н у
-    for (int i = 0; i <= n+1; i++)
+    vector<double> X(n + 2, 0), Time(m + 1, 0), ans(n * m, 0); // мы не храним края и н у
+    for (int i = 0; i <= n + 1; i++)
         X[i] = a + i * h;
     for (int i = 0; i <= m; i++)
         Time[i] = i * tau;
@@ -210,33 +210,33 @@ vector<double> Ex3(int n, int m) // номер последней точки м�
     // первая строчка значений 
     for (int i = 0; i <= n - 1; i++)
     {
-       ans[i] = phi0(X[i+1])+tau*phi1(X[i+1])+tau*tau/2*( sa* d2phi0(X[i + 1])+ G[i]);
+        ans[i] = phi0(X[i + 1]) + tau * phi1(X[i + 1]) + tau * tau / 2 * (sa * d2phi0(X[i + 1]) + G[i]);
     }
     // вторая строчка
-    ans[n] = p * (ans[1] - 2 * ans[0] + psi0(Time[1]) )+ tau * tau * G[n]
+    ans[n] = p * (ans[1] - 2 * ans[0] + psi0(Time[1])) + tau * tau * G[n]
         + 2 * ans[0] - phi0(X[1]);
     for (int i = 1; i < n; i++)
     {
-        ans[n+i] = p * (ans[i + 1] - 2 * ans[i] + ans[i - 1] ) + tau * tau * G[n+i]
+        ans[n + i] = p * (ans[i + 1] - 2 * ans[i] + ans[i - 1]) + tau * tau * G[n + i]
             + 2 * ans[i] - phi0(X[i + 1]);
     }
-    ans[2 * n - 1] = p * ((ans[n-1]+h*psi1(Time[1])) - 2 * ans[n-1] + ans[n-2]) + tau * tau * G[2 * n - 1]
-        + 2 * ans[n-1] - phi0(X[n]);
+    ans[2 * n - 1] = p * ((ans[n - 1] + h * psi1(Time[1])) - 2 * ans[n - 1] + ans[n - 2]) + tau * tau * G[2 * n - 1]
+        + 2 * ans[n - 1] - phi0(X[n]);
     // остальные
     for (int i = 2; i < m; i++)
     {
-        ans[i*n] = p * (ans[(i-1)*n+1] - 2 * ans[(i - 1) * n] +
+        ans[i * n] = p * (ans[(i - 1) * n + 1] - 2 * ans[(i - 1) * n] +
             psi0(Time[i])) + tau * tau * G[i * n] + 2 * ans[(i - 1) * n] -
             ans[(i - 2) * n];
-        for (int j = 1; j < n-1; j++)// цикл на последней итерации считает по краевому усл
+        for (int j = 1; j < n - 1; j++)// цикл на последней итерации считает по краевому усл
         {
-            ans[i*n + j] = p * (ans[(i - 1) * n + 1+j] - 2 * ans[(i - 1) * n+j] + ans[(i - 1) * n - 1 + j]) 
+            ans[i * n + j] = p * (ans[(i - 1) * n + 1 + j] - 2 * ans[(i - 1) * n + j] + ans[(i - 1) * n - 1 + j])
                 + tau * tau * G[i * n + j]
                 + 2 * ans[(i - 1) * n + j] - ans[(i - 2) * n + j];
         }
-        ans[(i+1) * n-1] = p * ((ans[i*n - 1] + h * psi1(Time[i])) - 2 * ans[i * n-1] +
-            ans[i*n-2]) + tau * tau * G[(i + 1) * n - 1] + 2 * ans[i * n-1] -
-            ans[(i - 1) * n-1];
+        ans[(i + 1) * n - 1] = p * ((ans[i * n - 1] + h * psi1(Time[i])) - 2 * ans[i * n - 1] +
+            ans[i * n - 2]) + tau * tau * G[(i + 1) * n - 1] + 2 * ans[i * n - 1] -
+            ans[(i - 1) * n - 1];
     }
     return ans;
 }
