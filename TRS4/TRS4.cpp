@@ -234,7 +234,8 @@ vector<double> Ex3(int n, int m) // номер последней точки м�
                 + tau * tau * G[i * n + j]
                 + 2 * ans[(i - 1) * n + j] - ans[(i - 2) * n + j];
         }
-        ans[(i+1) * n-1] = p * ((ans[i*n - 1] + h * psi1(Time[m])) - 2 * ans[i * n-1] +
+        ans[(i+1) * n-1] = p * ((ans[(i+1)*n-2]/h-h/(8*tau*tau)*(ans[(i+2)*n-1]
+            + ans[(i) * n - 1])+X[n]*Time[i]*h/8+psi1(Time[i])) - 2 * ans[i * n - 1] +
             ans[i*n-2]) + tau * tau * G[(i + 1) * n - 1] + 2 * ans[i * n-1] -
             ans[(i - 1) * n-1];
     }
