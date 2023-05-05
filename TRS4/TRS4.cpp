@@ -220,7 +220,7 @@ vector<double> Ex3(int n, int m) // номер последней точки м�
         ans[n+i] = p * (ans[i + 1] - 2 * ans[i] + ans[i - 1] ) + tau * tau * G[n+i]
             + 2 * ans[i] - phi0(X[i + 1]);
     }
-    ans[2 * n - 1] = p * ((ans[n-1]+h*psi1(Time[m])) - 2 * ans[n-1] + ans[n-2]) + tau * tau * G[2 * n - 1]
+    ans[2 * n - 1] = p * ((ans[n-1]+h*psi1(Time[1])) - 2 * ans[n-1] + ans[n-2]) + tau * tau * G[2 * n - 1]
         + 2 * ans[n-1] - phi0(X[n]);
     // остальные
     for (int i = 2; i < m; i++)
@@ -228,13 +228,13 @@ vector<double> Ex3(int n, int m) // номер последней точки м�
         ans[i*n] = p * (ans[(i-1)*n+1] - 2 * ans[(i - 1) * n] +
             psi0(Time[i])) + tau * tau * G[i * n] + 2 * ans[(i - 1) * n] -
             ans[(i - 2) * n];
-        for (int j = 0; j < n; j++)// цикл на последней итерации считает по краевому усл
+        for (int j = 1; j < n-1; j++)// цикл на последней итерации считает по краевому усл
         {
             ans[i*n + j] = p * (ans[(i - 1) * n + 1+j] - 2 * ans[(i - 1) * n+j] + ans[(i - 1) * n - 1 + j]) 
                 + tau * tau * G[i * n + j]
                 + 2 * ans[(i - 1) * n + j] - ans[(i - 2) * n + j];
         }
-        ans[(i+1) * n-1] = p * ((ans[i*n - 1] + h * psi1(Time[m])) - 2 * ans[i * n-1] +
+        ans[(i+1) * n-1] = p * ((ans[i*n - 1] + h * psi1(Time[i])) - 2 * ans[i * n-1] +
             ans[i*n-2]) + tau * tau * G[(i + 1) * n - 1] + 2 * ans[i * n-1] -
             ans[(i - 1) * n-1];
     }
@@ -335,12 +335,12 @@ int main()
     Temp.push_back(Ex2(10, 100));
     Temp.push_back(vector_true_U(10, 100));*/
     vector<vector<double>> Temp;
-    Temp.push_back(Ex3(10, 100));
+    /*Temp.push_back(Ex3(10, 100));
     Temp.push_back(vector_Dalamber_U(10, 100));
-    PrintAllVectors(Temp,10,100);
+    PrintAllVectors(Temp,10,100);*/
     // не забывать про условие устойчивости для явной схемы tau < dx
     //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
     //cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
-    cout << "ex3 max razn = " << MaxRazn(Ex3(100, 1000), vector_Dalamber_U(100, 1000)) << endl;
+    cout << "ex3 max razn = " << MaxRazn(Ex3(1500, 10000), vector_Dalamber_U(1500, 10000)) << endl;
     return 0;
 }
