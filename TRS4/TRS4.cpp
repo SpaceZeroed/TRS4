@@ -43,6 +43,10 @@ namespace var9
     {
         return x;
     }
+    double d2phi0(double x)
+    {
+        return 2;
+    }
     double psi0(double t)
     {
         return 16 * t * t;
@@ -206,7 +210,7 @@ vector<double> Ex3(int n, int m) // номер последней точки м�
     // первая строчка значений 
     for (int i = 0; i <= n - 1; i++)
     {
-       ans[i] = phi0(X[i+1])+tau*phi1(X[i+1]);
+       ans[i] = phi0(X[i+1])+tau*phi1(X[i+1])+tau*tau/2*( sa* d2phi0(X[i + 1])+ G[i]);
     }
     // вторая строчка
     ans[n] = p * (ans[1] - 2 * ans[0] + psi0(Time[1]) )+ tau * tau * G[n]
@@ -222,7 +226,7 @@ vector<double> Ex3(int n, int m) // номер последней точки м�
     for (int i = 2; i < m; i++)
     {
         ans[i*n] = p * (ans[(i-1)*n+1] - 2 * ans[(i - 1) * n] +
-            psi0(Time[i])) + tau * tau * G[i * n] + 2 * ans[(i - 1) * n] +
+            psi0(Time[i])) + tau * tau * G[i * n] + 2 * ans[(i - 1) * n] -
             ans[(i - 2) * n];
         for (int j = 0; j < n; j++)// цикл на последней итерации считает по краевому усл
         {
