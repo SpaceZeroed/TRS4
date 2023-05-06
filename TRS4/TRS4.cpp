@@ -240,76 +240,76 @@ vector<double> Ex3(int n, int m) // номер последней точки м�
     }
     return ans;
 }
-vector<double> Ex4(int n, int m)
-{
-    const double sigma = 0.3;
-    double h = (nb - a) / (n + 1);
-    double tau = T / (m);
-    vector<double> X(n + 2, 0), Time(m + 1, 0), ans(n * m, 0); // мы не храним края и н у
-    for (int i = 0; i <= n + 1; i++)
-    X[i] = a + i * h;
-    for (int i = 0; i <= m; i++)
-    Time[i] = i * tau;
-    cout << "Tau is " << tau << "  " << "H is " << h << endl;
-    vector<double> G = Make_G(n, m, X, Time);
-
-    vector<double> A(n);
-    vector<double> B(n);
-    vector<double> C(n);
-    vector<double> f(n);
-
-    for (int i = 1; i < n - 1; i++)
-    {
-        A[i] = -double(a) * sigma / h / h;
-        B[i] = 1. / tau / tau + 2 * a * sigma / h / h;
-        C[i] = -double(a) * sigma / h / h;
-    }
-
-    A[0] = 0;
-    B[0] = -1. / h;
-    C[0] = 1. / h;
-    A[n - 1] = 0;
-    B[n - 1] = 1.;
-    C[n - 1] = 0;
-
-
-    for (int j = 2; j < *n; j++)
-    {
-        double t = j * tau;
-        f[0] = ksi_0(t);
-        for (int i = 1; i < *m - 1; i++)
-        {
-            double x = i * h;
-            f[i] = 2 * u[j - 1][i] / tau / tau - u[j - 2][i] / tau / tau + a * (1 - 2 * sigma) / h / h * (u[j - 1][i + 1] - 2 * u[j - 1][i]
-                + u[j - 1][i - 1]) + a * sigma / h / h * (u[j - 2][i + 1] - 2 * u[j - 2][i] + u[j - 2][i - 1]) + F(t, x);
-        }
-        f[*m - 1] = ksi_1(t);
-
-        tridiagonal_matrix(*m, A, B, C, f, u[j]);
-
-        u[j][0] = -ksi_0(t) * h + u[j][1];
-        u[j][*m - 1] = ksi_1(t);
-    }
-
-    double diff, M = 0;
-    for (int j = 0; j < *n; j++)
-    {
-        for (int i = 0; i < *m; i++)
-        {
-            diff = abs(u[j][i] - True_solve(j * tau, i * h));
-            if (diff > M) {
-                M = diff;
-
-            }
-            //cout << j * tau << "    " << i * h << "    " << M << endl;
-            //cout << j * tau << "    " << i * h << "    " << u[j][i] << "   " << True_solve(j * tau, i * h) << endl;
-        }
-        //cout << endl;
-        //if (j == 3) system("pause");
-    }
-    cout << "n: " << n << "  m: " << m << "  error:" << M << endl;
-    return 0;
-}
+//vector<double> Ex4(int n, int m)
+//{
+//    const double sigma = 0.3;
+//    double h = (nb - a) / (n + 1);
+//    double tau = T / (m);
+//    vector<double> X(n + 2, 0), Time(m + 1, 0), ans(n * m, 0); // мы не храним края и н у
+//    for (int i = 0; i <= n + 1; i++)
+//    X[i] = a + i * h;
+//    for (int i = 0; i <= m; i++)
+//    Time[i] = i * tau;
+//    cout << "Tau is " << tau << "  " << "H is " << h << endl;
+//    vector<double> G = Make_G(n, m, X, Time);
+//
+//    vector<double> A(n);
+//    vector<double> B(n);
+//    vector<double> C(n);
+//    vector<double> f(n);
+//
+//    for (int i = 1; i < n - 1; i++)
+//    {
+//        A[i] = -double(a) * sigma / h / h;
+//        B[i] = 1. / tau / tau + 2 * a * sigma / h / h;
+//        C[i] = -double(a) * sigma / h / h;
+//    }
+//
+//    A[0] = 0;
+//    B[0] = -1. / h;
+//    C[0] = 1. / h;
+//    A[n - 1] = 0;
+//    B[n - 1] = 1.;
+//    C[n - 1] = 0;
+//
+//
+//    for (int j = 2; j < *n; j++)
+//    {
+//        double t = j * tau;
+//        f[0] = ksi_0(t);
+//        for (int i = 1; i < *m - 1; i++)
+//        {
+//            double x = i * h;
+//            f[i] = 2 * u[j - 1][i] / tau / tau - u[j - 2][i] / tau / tau + a * (1 - 2 * sigma) / h / h * (u[j - 1][i + 1] - 2 * u[j - 1][i]
+//                + u[j - 1][i - 1]) + a * sigma / h / h * (u[j - 2][i + 1] - 2 * u[j - 2][i] + u[j - 2][i - 1]) + F(t, x);
+//        }
+//        f[*m - 1] = ksi_1(t);
+//
+//        tridiagonal_matrix(*m, A, B, C, f, u[j]);
+//
+//        u[j][0] = -ksi_0(t) * h + u[j][1];
+//        u[j][*m - 1] = ksi_1(t);
+//    }
+//
+//    double diff, M = 0;
+//    for (int j = 0; j < *n; j++)
+//    {
+//        for (int i = 0; i < *m; i++)
+//        {
+//            diff = abs(u[j][i] - True_solve(j * tau, i * h));
+//            if (diff > M) {
+//                M = diff;
+//
+//            }
+//            //cout << j * tau << "    " << i * h << "    " << M << endl;
+//            //cout << j * tau << "    " << i * h << "    " << u[j][i] << "   " << True_solve(j * tau, i * h) << endl;
+//        }
+//        //cout << endl;
+//        //if (j == 3) system("pause");
+//    }
+//    cout << "n: " << n << "  m: " << m << "  error:" << M << endl;
+//    return 0;
+//}
 vector<double> vector_true_U(int n, int m)
 {
     double dx = (b - a) / (n - 1);
