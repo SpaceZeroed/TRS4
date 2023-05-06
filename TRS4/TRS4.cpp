@@ -341,7 +341,7 @@ int main()
     // не забывать про условие устойчивости для явной схемы tau < dx
     //cout << "ex1 max razn = " << MaxRazn(Ex1(100, 1000), vector_true_U(100, 1000))<< endl;
     //cout << "ex2 max razn = " << MaxRazn(Ex2(100, 1000), vector_true_U(100, 1000))<< endl;
-    cout << "ex3 max razn = " << MaxRazn(Ex3(100, 1000), vector_Dalamber_U(100, 1000)) << endl;
+    cout << "ex3 max razn = " << MaxRazn(Ex3(1000, 10000), vector_Dalamber_U(1000, 10000)) << endl;
     return 0;
 }
 
